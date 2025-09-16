@@ -1,124 +1,119 @@
-# Proposed Diagrams for the Paper
+# Proposed Diagrams and Tables for the Paper
 
-This document contains three proposed diagrams to visually support the key concepts in our paper. Each diagram is presented in Mermaid syntax for easy integration and editing.
+This document contains revised, more concise diagrams and a set of proposed tables to clearly and efficiently present the paper's key information.
 
 ---
+
+## **Revised (Concise) Diagrams**
+
+Here are the updated diagrams, simplified for clarity and impact.
 
 ### **Diagram 1: The Pedagogical Framework (Educator's Perspective)**
 
-**Purpose:** This high-level flowchart provides an educator-centric view of the entire 13-week course. It illustrates the scaffolding of complexity, showing how students progress from individual tasks to full multi-squad collaboration. This diagram would fit well in **Section 3 (The Pedagogical Framework)** to give readers a map of the student journey.
+**Note on Conciseness:** The key learnings are now integrated directly into the activity blocks to reduce the number of nodes and create a cleaner flow.
 
 ```mermaid
 graph TD
-    subgraph "Weeks 1-2: Foundations"
-        A[Individual Tutorials: Git & PERN Stack]
+    subgraph "Weeks 1-2"
+        A[Individual Tutorials <br> *Baseline Git & Tech Skills*]
     end
 
-    subgraph "Weeks 3-5: Initial Collaboration"
-        B(Single-Squad Project: Enhancement Task)
-        C{Key Learnings: GitFlow, Basic Teamwork}
+    subgraph "Weeks 3-5"
+        B(Single-Squad Project <br> *Practice GitFlow & Teamwork*)
     end
 
-    subgraph "Weeks 6-8: Multi-Squad Design Phase"
-        D[Analysis: User Stories & Data Models]
-        E[Contract Definition: Collaborative OpenAPI Spec]
-        F{Key Learnings: API-First Design, Negotiation}
+    subgraph "Weeks 6-8"
+        C(Multi-Squad Design Phase <br> *Define OpenAPI Contract*)
     end
 
-    subgraph "Weeks 9-12: Multi-Squad Implementation Phase"
-        G[Automated Scaffolding from Contract]
-        H[Implementation within MVC Stubs]
-        I[Verification via Automated Quality Gates]
-        J{Key Learnings: Architectural Adherence, TDD}
+    subgraph "Weeks 9-12"
+        D(Multi-Squad Implementation <br> *Build & Verify Against Contract*)
     end
 
-    subgraph "Week 13: Reflection"
-        K[Final Retrospective & Course Summary]
+    subgraph "Week 13"
+        E[Final Course Retrospective]
     end
 
-    A --> B;
-    B --> C;
-    C --> D;
-    D --> E;
-    E --> F;
-    F --> G;
-    G --> H;
-    H --> I;
-    I --> J;
-    J --> K;
+    A --> B --> C --> D --> E;
 ```
-
----
 
 ### **Diagram 2: The Design-First Technical Workflow (Technical Perspective)**
 
-**Purpose:** This diagram provides a detailed, technical view of the core design-first process for the main "Galleria" project. It explicitly shows the artifacts, activities, and tools involved, making the entire workflow tangible for the reader. This is a critical diagram and would be best placed in **Section 4 (Constraining AI)** to illustrate the system of constraints.
+**Note on Conciseness:** The CI/CD Pipeline is now abstracted into a single process block. The detailed steps within the pipeline are better represented in the new **Table 2** below, which is a clearer format for that information.
 
 ```mermaid
 graph TD
-    A[Project Requirements Document] --> B(1. Requirements Analysis);
-    
-    subgraph "Phase 1: Design (in Moqups)"
-        B --> C{User Stories};
-        B --> D{Data Models};
-    end
+    A[Project Requirements] --> B(1. Analysis & Design);
+    B --> C([openapi.yaml]);
+    C -- feeds --> D(2. Automated Scaffolding);
+    D -- generates --> E(MVC Application Stubs);
+    E --> F(3. Student Implementation);
+    F -- creates --> G(Pull Request);
+    G --> H{{4. Automated Quality Gates <br> (CI/CD Pipeline)}};
+    H -- on pass --> I([Merged Code]);
 
-    C --> E[2. Collaborative Contract Definition];
-    D --> E;
-
-    subgraph "Phase 2: Contract as Source of Truth"
-        E --> F([openapi.yaml]);
-    end
-
-    subgraph "Phase 3: Automated Generation"
-        F -- feeds --> G(Custom Handlebars Templates);
-        G -- generates --> H(Application Scaffold: MVC, Stubs);
-    end
-
-    subgraph "Phase 4: Implementation & Verification"
-        I(Student Code in Stubs) -- creates --> J(Pull Request);
-        H -- is filled by --> I;
-        
-        subgraph CI/CD Pipeline (GitHub Actions)
-            J --> K{Gate 1: Linters 
-(ESLint, Hoover)};
-            K -- on pass --> L{Gate 2: Contract Tests 
-(Postman, Newman)};
-            L -- on pass --> M{Gate 3: Architectural Rules 
-(dependency-cruiser)};
-            M -- on pass --> N[Merge to Develop];
-        end
-
-        subgraph Runtime Constraint
-             O(Live Application) -- request/response --> P{Gate 4: OpenAPI Validator 
-(Middleware)};
-        end
-    end
+    style H fill:#f9f,stroke:#333,stroke-width:2px
 ```
 
----
+### **Diagram 3: The "Constraint Funnel" Conceptual Model**
 
-### **Diagram 3 (Suggested): The "Constraint Funnel" Conceptual Model**
-
-**Purpose:** The idea that the framework "constrains AI" is the most novel part of our paper, but it can be abstract. This conceptual diagram visualizes how the layers of the framework act as a funnel, filtering raw or AI-generated code to produce high-quality, compliant output. It makes the core argument of **Section 4** immediately understandable.
+**Note on Conciseness:** This diagram is already conceptual. The text has been slightly tightened for clarity.
 
 ```mermaid
 graph TD
-    A(Input: Student-written or <br> AI-generated code);
+    A(Input: <br> Raw Student or AI-Generated Code);
 
-    A --> B{Constraint 1: <br> Does it fit the MVC Scaffold?};
-    B -- Yes --> C{Constraint 2: <br> Does it pass Static Analysis & Linters?};
-    B -- No --> Z(Rejected: <br> Architectural Violation);
+    A --> B{Constraint 1: <br> Architectural Fit?};
+    B -- Yes --> C{Constraint 2: <br> Passes Static Analysis?};
+    B -- No --> Z(Rejected);
     
-    C -- Yes --> D{Constraint 3: <br> Does it pass Automated Contract Tests?};
+    C -- Yes --> D{Constraint 3: <br> Passes Contract Tests?};
     C -- No --> Z;
 
-    D -- Yes --> E{Constraint 4: <br> Does it pass Runtime Validation?};
+    D -- Yes --> E{Constraint 4: <br> Passes Runtime Validation?};
     D -- No --> Z;
 
-    E -- Yes --> F([Output: High-Quality, <br> Contract-Compliant Code]);
-    E -- No --> Z;
+    E -- Yes --> F([Output: <br> High-Quality, Compliant Code]);
 
     style Z fill:#f9f,stroke:#333,stroke-width:2px;
     style F fill:#9f9,stroke:#333,stroke-width:2px;
 ```
+
+---
+
+## **Proposed Tables**
+
+Tables are excellent for presenting structured details concisely. Here are three suggestions.
+
+### **Table 1: Course Structure and Learning Objectives**
+
+**Purpose:** This table complements Diagram 1. While the diagram shows the flow, this table provides the details for each phase, connecting activities to their pedagogical goals. It would fit well in **Section 3.1 (Course Structure)**.
+
+| Phase | Weeks | Key Activities | Primary Learning Objectives |
+| :--- | :--- | :--- | :--- |
+| **1. Foundations** | 1-2 | Individual Tutorials (Git, PERN) | Establish baseline technical competency. |
+| **2. Initial Collab.** | 3-5 | Single-Squad Enhancement Task | Practice GitFlow and basic teamwork in a low-dependency setting. |
+| **3. System Design** | 6-8 | Multi-squad requirements analysis; Collaborative OpenAPI contract definition. | Learn API-first design, cross-team negotiation, and specification. |
+| **4. System Impl.** | 9-12 | Implement logic in scaffolded stubs; Verify via automated quality gates. | Adhere to architecture, practice TDD, and respond to CI/CD feedback. |
+| **5. Reflection** | 13 | Final project retrospective. | Synthesize learnings on process, teamwork, and design. |
+
+### **Table 2: Automated Quality Gates in the CI/CD Pipeline**
+
+**Purpose:** This table replaces the complex subgraph in the original Diagram 2. It clearly and concisely lists each automated check, the tool used, and its function. This is perfect for **Section 4.2 (Automated Quality Gates)**.
+
+| Gate | Tool(s) | Purpose / Check Performed |
+| :--- | :--- | :--- |
+| **1. Static Analysis** | ESLint, Hoover | Enforces consistent code style and OpenAPI specification best practices. |
+| **2. Arch. Rules** | dependency-cruiser | Prevents direct cross-squad code imports, enforcing API-only communication. |
+| **3. Contract Tests** | Postman / Newman | Executes automated tests to validate that each endpoint's functionality matches the contract. |
+| **4. Runtime Validation**| OpenAPI Validator | (Middleware) Intercepts live requests/responses to ensure they conform to the contract schema. |
+
+### **Table 3: Mapping Research Questions to Evidence**
+
+**Purpose:** This table provides a powerful, concise summary of our research methodology. It explicitly connects each research question to the data sources and metrics used to answer it, greatly strengthening the credibility of our results. This would be an excellent addition to **Section 5 (Methodology)**.
+
+| Research Question (RQ) | Primary Data Source(s) | Key Metrics / Analysis Type |
+| :--- | :--- | :--- |
+| **RQ1: Collaboration** | GitHub Logs (Commits, PRs) | **Quantitative:** Contribution balance, fetch-to-push ratio, PR comment depth, emergent role analysis. |
+| **RQ2: Quality** | CI/CD Logs, Source Code | **Quantitative:** CI/CD failure rate (25.6%), PR merge rate (83%), static analysis of code evolution. |
+| **RQ3: AI Perception** | Retrospectives, Slack, Grades | **Qualitative:** Thematic analysis of student feedback. **Mixed:** Correlating CI/CD failures with student comments and grades. |
