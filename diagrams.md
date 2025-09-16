@@ -56,7 +56,7 @@ graph TD
 
 ```mermaid
 graph TD
-    A[Project Requirements Document] --> B(1. Requirements Analysis];
+    A[Project Requirements Document] --> B(1. Requirements Analysis);
     
     subgraph "Phase 1: Design (in Moqups)"
         B --> C{User Stories};
